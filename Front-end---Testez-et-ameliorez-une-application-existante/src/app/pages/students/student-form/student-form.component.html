@@ -1,0 +1,16 @@
+<h2>{{ studentId ? 'Modifier' : 'Créer' }} un étudiant</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+
+  <input formControlName="firstName" placeholder="Prénom">
+  <input formControlName="lastName" placeholder="Nom">
+  <input formControlName="email" placeholder="Email">
+  <input formControlName="phone" placeholder="Téléphone">
+  <input formControlName="address" placeholder="Adresse">
+  <input formControlName="city" placeholder="Ville">
+
+  <button type="submit">
+    {{ studentId ? 'Modifier' : 'Créer' }}
+  </button>
+
+</form>

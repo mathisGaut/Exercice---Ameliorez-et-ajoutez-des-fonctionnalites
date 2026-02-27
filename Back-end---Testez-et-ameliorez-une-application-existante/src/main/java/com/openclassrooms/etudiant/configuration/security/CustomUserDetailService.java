@@ -1,0 +1,31 @@
+package com.openclassrooms.etudiant.configuration.security;
+
+import com.openclassrooms.etudiant.entities.User;
+import com.openclassrooms.etudiant.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CustomUserDetailService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+
+        System.out.println("👥 loadUserByUsername() appelé avec : " + login);
+
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User Not Found with login: " + login)
+                );
+
+        System.out.println("👥 User trouvé en base : " + user.getLogin());
+
+        return user;
+    }
+}

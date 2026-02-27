@@ -1,0 +1,47 @@
+<h2>Liste des étudiants 🎓</h2>
+
+<div style="margin-bottom: 15px;">
+  <button routerLink="/students/new">
+    ➕ Ajouter un étudiant
+  </button>
+</div>
+
+<div *ngIf="loading">
+  Chargement...
+</div>
+
+<div *ngIf="!loading && students.length === 0">
+  Aucun étudiant trouvé.
+</div>
+
+<table *ngIf="!loading && students.length > 0" border="1" cellpadding="8">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Prénom</th>
+      <th>Nom</th>
+      <th>Email</th>
+      <th>Ville</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let student of students">
+      <td>{{ student.id }}</td>
+      <td>{{ student.firstName }}</td>
+      <td>{{ student.lastName }}</td>
+      <td>{{ student.email }}</td>
+      <td>{{ student.city }}</td>
+      <td>
+        <button [routerLink]="['/students/edit', student.id]">
+          ✏️ Modifier
+        </button>
+
+        <button (click)="deleteStudent(student.id)">
+          🗑 Supprimer
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
