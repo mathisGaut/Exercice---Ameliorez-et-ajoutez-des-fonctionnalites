@@ -1,6 +1,7 @@
 package com.openclassrooms.etudiant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.etudiant.dto.LoginRequestDTO;
 import com.openclassrooms.etudiant.dto.RegisterDTO;
 import com.openclassrooms.etudiant.entities.User;
 import com.openclassrooms.etudiant.repository.UserRepository;
@@ -20,6 +21,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -60,6 +62,7 @@ public class UserControllerTest {
         userRepository.deleteAll();
     }
 
+    // Test de création d'un utilisateur sans données valides
     @Test
     public void registerUserWithoutRequiredData() throws Exception {
         // GIVEN
@@ -74,6 +77,7 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    // Test de création d'un utilisateur déjà existant
     @Test
     public void registerAlreadyExistUser() throws Exception {
         // GIVEN
@@ -99,6 +103,7 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    // Test de création d'un utilisateur réussi
     @Test
     public void registerUserSuccessful() throws Exception {
         // GIVEN
@@ -115,5 +120,29 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    public void login_validCredentials_returns200AndJwt() throws Exception {
+        // GIVEN: user registered
+        User user = new User();
+        user.setFirstName(FIRST_NAME);
+        user.setLastName(LAST_NAME);
+        user.setLogin(LOGIN);
+        user.setPassword(PASSWORD);
+        userService.register(user);
+
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setLogin(LOGIN);
+        loginRequest.setPassword(PASSWORD);
+
+        // WHEN / THEN
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+                        .content(objectMapper.writeValueAsString(loginRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(r -> assertThat(r.getResponse().getContentAsString()).isNotBlank());
     }
 }

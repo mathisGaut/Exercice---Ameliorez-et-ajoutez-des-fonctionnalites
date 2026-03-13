@@ -24,13 +24,19 @@ public class UserServiceTest {
     private static final String LAST_NAME = "Doe";
     private static final String LOGIN = "LOGIN";
     private static final String PASSWORD = "PASSWORD";
+    private static final String ENCODED_PASSWORD = "ENCODED";
+    private static final String JWT_TOKEN = "jwt-token-123";
+
     @Mock
     private UserRepository userRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private JwtService jwtService;
     @InjectMocks
     private UserService userService;
 
+    // Test de création d'un utilisateur null
     @Test
     public void test_create_null_user_throws_IllegalArgumentException() {
         // GIVEN
@@ -40,6 +46,7 @@ public class UserServiceTest {
                 () -> userService.register(null));
     }
 
+    // Test de création d'un utilisateur déjà existant
     @Test
     public void test_create_already_exist_user_throws_IllegalArgumentException() {
         // GIVEN
@@ -56,6 +63,7 @@ public class UserServiceTest {
                 () -> userService.register(user));
     }
 
+    // Test de création d'un utilisateur réussi
     @Test
     public void test_create_user() {
         // GIVEN
@@ -74,5 +82,23 @@ public class UserServiceTest {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());
         assertThat(userCaptor.getValue()).isEqualTo(user);
+    }
+
+    @Test
+    public void login_validCredentials_returnsJwt() {
+        // GIVEN
+        User user = new User();
+        user.setLogin(LOGIN);
+        user.setPassword(ENCODED_PASSWORD);
+        when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
+        when(jwtService.generateToken(any())).thenReturn(JWT_TOKEN);
+
+        // WHEN
+        String result = userService.login(LOGIN, PASSWORD);
+
+        // THEN
+        assertThat(result).isEqualTo(JWT_TOKEN);
+        verify(jwtService).generateToken(any());
     }
 }
