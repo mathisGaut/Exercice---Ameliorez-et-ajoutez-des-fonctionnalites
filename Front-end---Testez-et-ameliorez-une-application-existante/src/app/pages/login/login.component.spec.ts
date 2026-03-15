@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
@@ -35,10 +35,28 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should expose form controls via form getter', () => {
+    expect(component.form).toBe(component.loginForm.controls);
+  });
+
   it('onSubmit with valid form should call AuthService.login and navigate to /students', () => {
     component.loginForm.setValue({ login: 'user', password: 'pass' });
     component.onSubmit();
     expect(authService.login).toHaveBeenCalledWith('user', 'pass');
     expect(router.navigate).toHaveBeenCalledWith(['/students']);
+  });
+
+  it('onSubmit with invalid form should not call AuthService.login', () => {
+    component.loginForm.setValue({ login: '', password: '' });
+    component.onSubmit();
+    expect(authService.login).not.toHaveBeenCalled();
+    expect(component.submitted).toBe(true);
+  });
+
+  it('onSubmit on login error should set errorMessage', () => {
+    authService.login.mockReturnValue(throwError(() => new Error('Unauthorized')));
+    component.loginForm.setValue({ login: 'user', password: 'wrong' });
+    component.onSubmit();
+    expect(component.errorMessage).toBe('Login ou mot de passe incorrect ❌');
   });
 });

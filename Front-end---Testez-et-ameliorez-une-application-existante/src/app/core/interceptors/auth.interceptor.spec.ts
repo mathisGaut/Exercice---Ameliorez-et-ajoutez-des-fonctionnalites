@@ -56,4 +56,11 @@ describe('authInterceptor', () => {
     expect(req.request.headers.get('Authorization')).toBe('Bearer my-jwt-token');
     req.flush([]);
   });
+
+  it('should pass request without Authorization header when no token', (done) => {
+    TestBed.inject(HttpClient).get('http://localhost:8080/api/students').subscribe(() => done());
+    const req = httpMock.expectOne('http://localhost:8080/api/students');
+    expect(req.request.headers.has('Authorization')).toBe(false);
+    req.flush([]);
+  });
 });

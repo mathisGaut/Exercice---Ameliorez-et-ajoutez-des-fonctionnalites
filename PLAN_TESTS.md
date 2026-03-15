@@ -25,7 +25,8 @@
   - PUT `/students/{id}` → 200
   - DELETE `/students/{id}` → 204
 
-*Pour exécuter les test Back-end : `nvn test`
+*Pour exécuter les tests Back-end : `mvn test`  
+*Rapport de couverture (JaCoCo) : après `mvn test`, ouvrir **`target/site/jacoco/index.html`** dans le navigateur (taux minimum attendu : 80 %). Pour faire échouer le build si la couverture est sous 80 % : `mvn verify`.
 
 ## Front-End (Jest)
 
@@ -45,7 +46,8 @@
 - **LoginComponent** : soumission formulaire valide → appel AuthService.login + navigation
 - **StudentListComponent** : chargement → appel StudentService.getAll
 
-*Pour exécuter les test Jest : `npm test`
+*Pour exécuter les tests Jest : `npm test`  
+*Rapport de couverture : `npm run test:coverage` ; rapport HTML dans **`coverage/index.html`** (seuil 80 %).
 
 ---
 
