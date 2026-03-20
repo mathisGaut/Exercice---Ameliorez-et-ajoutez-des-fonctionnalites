@@ -44,15 +44,30 @@ To execute unit tests with the [Jest](https://jestjs.io/) test runner, use the f
 jest
 ```
 
-## Running end-to-end tests
+## Tests end-to-end (Cypress)
 
-For end-to-end (e2e) testing, run:
+Sans instrumentation (à lancer avec l’app déjà servie, par ex. `ng serve` sur le port 4200) :
 
 ```bash
-ng e2e
+npm run e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Avec **couverture de code E2E** (sert l’app via Webpack + Istanbul, lance Cypress, puis génère un rapport NYC) :
+
+```bash
+npm run e2e:coverage
+```
+
+- Rapport HTML : `coverage-e2e/index.html` (dossiers `coverage-e2e/` et `.nyc_output/` sont ignorés par Git). Ouvrir ce fichier **via le chemin absolu** ou « Révéler dans le Finder » plutôt que depuis un autre dossier : le rapport NYC référence des assets dans le même répertoire.
+- Avant chaque run, `pree2e:coverage` nettoie `.nyc_output` et `coverage-e2e` pour éviter un rapport incohérent.
+- Pour régénérer le HTML à partir d’un run déjà terminé : `npm run coverage:report` (lit **uniquement** `.nyc_output/out.json`). Sans **`npm run e2e:coverage` au préalable**, ce fichier est vide : vous verrez un message d’erreur explicite au lieu d’un rapport 0 %.
+- Le build instrumenté est plus lent que `ng serve` classique ; libérez le port **4200** avant de lancer la commande.
+
+Pour ouvrir l’UI Cypress :
+
+```bash
+npm run cypress:open
+```
 
 ## Additional Resources
 

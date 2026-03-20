@@ -115,6 +115,12 @@ Pour exécuter les tests Junit, il faut :
 mvn clean test
 ```
 
+Après les tests, le rapport **JaCoCo** (couverture de code) est généré ici :
+
+**`target/site/jacoco/index.html`**
+
+Ouvrez ce fichier dans le navigateur pour une vue claire des pourcentages et des fichiers (idéal pour une capture d’écran).
+
 ## Fonctionnalités portées
 
     - API de création d'un utilisateur (agent de la bibliothèque)
